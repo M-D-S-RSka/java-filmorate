@@ -17,7 +17,7 @@ public class FilmController {
     private int id = 0;
 
     @ResponseBody
-    @PostMapping(value = "/filmHashMap")
+    @PostMapping(value = "/films")
     public Film create(@Valid @RequestBody Film film) {
         filmValidation(film);
         filmsHashMap.put(film.getId(), film);
