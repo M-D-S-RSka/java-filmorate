@@ -10,17 +10,16 @@ import java.time.LocalDate;
 @Data
 @Builder(toBuilder = true)
 @AllArgsConstructor
-public class Film {
+public class User {
     private int id;
 
+    @Email
+    private String email;
+
     @NotBlank
+    private String login;
     private String name;
 
-    @Size(min = 1, max = 200)
-    private String description;
-
-    private LocalDate releaseDate;
-
-    @PositiveOrZero
-    private int duration;
+    @PastOrPresent
+    private LocalDate birthday;
 }
