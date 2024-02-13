@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.markers.Marker.Update;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -16,14 +18,14 @@ import java.util.*;
 @RestController
 public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
+    @NotNull(groups = {Update.class})
     private int id = 1;
 
     @PostMapping
     public User create(@Validated @RequestBody User user) {
         userValidation(user);
-        user.setId(id);
+        user.setId(id++);
         users.put(user.getId(), user);
-        id++;
         log.info("Пользователь '{}' сохранен с id '{}'", user.getEmail(), user.getId());
         return user;
     }
@@ -35,7 +37,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@Validated @RequestBody User user) {
+    public User update(@Validated(Update.class) @RequestBody User user) {
         userValidation(user);
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);

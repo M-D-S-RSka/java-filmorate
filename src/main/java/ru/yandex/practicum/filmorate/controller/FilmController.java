@@ -6,22 +6,24 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.markers.Marker.Update;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
 
 @Slf4j
 @RestController
 public class FilmController {
-    private final HashMap<Integer, Film> films = new HashMap<>();
+    private final Map<Integer, Film> films = new HashMap<>();
+    @NotNull(groups = {Update.class})
     private int id = 1;
 
     @PostMapping(value = "/films")
     public Film create(@Validated @RequestBody Film film) {
         filmValidation(film);
-        film.setId(id);
+        film.setId(id++);
         films.put(film.getId(), film);
-        id++;
         log.info("'{}' фильм добавлен в библиотеку с id '{}'", film.getName(), film.getId());
         return film;
     }
@@ -33,7 +35,7 @@ public class FilmController {
     }
 
     @PutMapping("/films")
-    public Film update(@Validated @RequestBody Film film) {
+    public Film update(@Validated(Update.class) @RequestBody Film film) {
         filmValidation(film);
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
@@ -45,8 +47,11 @@ public class FilmController {
     }
 
     private void filmValidation(Film film) {
+        final LocalDate date = LocalDate.of(1895, 12, 28);
+        final boolean characterCount = film.getDescription().length() > 200;
+
         if (film.getReleaseDate() == null ||
-                film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+                film.getReleaseDate().isBefore(date)) {
             throw new ValidationException("Неверная дата");
         }
         if (film.getName().isEmpty() || film.getName().isBlank()) {
@@ -55,7 +60,7 @@ public class FilmController {
         if (film.getDuration() <= 0) {
             throw new ValidationException("Попытка установить продолжительность меньше нуля");
         }
-        if (film.getDescription().length() > 200 || film.getDescription().isEmpty()) {
+        if (characterCount || film.getDescription().isEmpty()) {
             throw new ValidationException("Описание бьльше 200 символов или пустое");
         }
         if (film.getId() <= 0) {
