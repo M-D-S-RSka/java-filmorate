@@ -17,7 +17,7 @@ public class FilmController {
     private final Map<Long, Film> films = new HashMap<>();
     private static final LocalDate date = LocalDate.of(1895, 12, 28);
     private static final int characterCount = 200;
-    private static long id = 1;
+    private long id = 1;
 
     @PostMapping(value = "/films")
     public Film create(@Validated @RequestBody Film film) {

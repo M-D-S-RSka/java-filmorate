@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.UserController;
@@ -11,7 +12,13 @@ import java.time.LocalDate;
 
 @SpringBootTest
 public class UserControllerTest {
-    private final UserController controller = new UserController();
+    private UserController controller = new UserController();
+
+    @BeforeEach
+    public void beforeEach() {
+        controller = new UserController();
+    }
+
     private final User user = User.builder()
             .id(1)
             .email("yandex@yandex.ru")

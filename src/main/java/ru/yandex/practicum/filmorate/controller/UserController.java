@@ -17,7 +17,7 @@ import java.util.*;
 @RestController
 public class UserController {
     private final Map<Long, User> users = new HashMap<>();
-    private static long id = 1;
+    private long id = 1;
 
     @PostMapping
     public User create(@Validated @RequestBody User user) {
