@@ -17,14 +17,13 @@ import java.util.*;
 @RequestMapping("/users")
 @RestController
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
-    @NotNull(groups = {Update.class})
-    private int id = 1;
+    private final Map<Long, User> users = new HashMap<>();
+    private static long id = 1;
 
     @PostMapping
     public User create(@Validated @RequestBody User user) {
         userValidation(user);
-        user.setId(id++);
+        user.setId(getId());
         users.put(user.getId(), user);
         log.info("Пользователь '{}' сохранен с id '{}'", user.getEmail(), user.getId());
         return user;
@@ -66,5 +65,9 @@ public class UserController {
         if (user.getLogin().isBlank() || user.getLogin().isEmpty()) {
             throw new ValidationException("Неверный логин пользователя с id '" + user.getId() + "'");
         }
+    }
+
+    public long getId() {
+        return id++;
     }
 }
