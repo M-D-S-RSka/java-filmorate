@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class FilmControllerTest {
     private final FilmController controller = new FilmController();
     private final Film film = Film.builder()
-            .id(1)
+            .id(2)
             .name("Movie")
             .description("Самый потрясающий фильм, который я когда-либо видел")
             .releaseDate(LocalDate.of(2020, 2, 2))
