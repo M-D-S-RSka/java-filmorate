@@ -12,20 +12,19 @@ import java.time.LocalDate;
 @Data
 @Builder(toBuilder = true)
 @AllArgsConstructor
-public class Film {
+public class User {
+
     @NotNull(groups = {Marker.Update.class})
     private long id;
 
+    @Email
+    private String email;
+
     @NotBlank
+    private String login;
     private String name;
 
-    @Size(min = 1, max = 200)
-    private String description;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @NotNull
-    private LocalDate releaseDate;
-
-    @PositiveOrZero
-    private int duration;
+    @PastOrPresent
+    private LocalDate birthday;
 }
