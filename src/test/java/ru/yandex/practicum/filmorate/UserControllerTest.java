@@ -38,11 +38,9 @@ public class UserControllerTest {
 
     @Test
     void create_shouldCreateAUser() {
-        User thisUser = new User(1, "yandex@yandex.ru", "user", "User",
-                LocalDate.of(1990, 1, 1), Set.of(2L), null);
-        controller.create(thisUser);
+        controller.create(user);
 
-        Assertions.assertEquals(user, thisUser);
+        Assertions.assertEquals(user, userStorage.getUserById(1L));
         Assertions.assertEquals(1, controller.getUsers().size());
     }
 

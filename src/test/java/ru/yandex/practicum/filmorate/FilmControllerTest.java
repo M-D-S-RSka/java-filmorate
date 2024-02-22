@@ -30,7 +30,7 @@ public class FilmControllerTest {
             .build();
 
     @BeforeEach
-    protected void init() {
+    protected void start() {
         filmStorage = new InMemoryFilmStorage();
         filmService = new FilmService();
         controller = new FilmController(filmStorage, filmService);
@@ -38,11 +38,9 @@ public class FilmControllerTest {
 
     @Test
     void create_shouldAddAMovie() {
-        Film thisFilm = new Film(1, "Movie", "Самый потрясающий фильм, который я когда-либо видел",
-                LocalDate.of(2020, 2, 2), 120, Set.of(1L));
-        controller.create(thisFilm);
+        controller.create(film);
 
-        Assertions.assertEquals(film, thisFilm);
+        Assertions.assertEquals(film, filmStorage.getFilmById(1L));
         Assertions.assertEquals(1, controller.getFilms().size());
     }
 
