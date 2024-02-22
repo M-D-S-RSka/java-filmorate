@@ -6,8 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.markers.Marker;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder(toBuilder = true)
@@ -28,4 +33,20 @@ public class Film {
 
     @PositiveOrZero
     private int duration;
+
+    private Set<Long> likesIds;
+
+    public void addLike(Long id) {
+        if (likesIds == null) {
+            likesIds = new HashSet<>();
+        }
+        likesIds.add(id);
+    }
+
+    public void deleteLike(Long id) {
+        if (likesIds == null) {
+            likesIds = new HashSet<>();
+        }
+        likesIds.remove(id);
+    }
 }
