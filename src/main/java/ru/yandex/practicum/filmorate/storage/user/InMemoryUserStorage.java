@@ -3,10 +3,9 @@ package ru.yandex.practicum.filmorate.storage.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,7 +21,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
-        userValidation(user);
+        UserService.userValidation(user);
         user.setFriendsIds(new HashSet<>());
         user.setId(getId());
         users.put(user.getId(), user);
@@ -45,7 +44,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        userValidation(user);
+        UserService.userValidation(user);
         user.setFriendsIds(new HashSet<>());
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
@@ -79,32 +78,15 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> getMutualFriends(Long userId, Long friendId) {
-        List<User> mutualFriends = new ArrayList<>();
-        for (Long id : getUserById(userId).getFriendsIds()) {
-            if (getUserById(friendId).getFriendsIds().contains(id)) {
-                mutualFriends.add(getUserById(id));
-            }
-        }
-        return mutualFriends;
-    }
-
-    private void userValidation(User user) {
-        if (user.getBirthday().isAfter(LocalDate.now()) || user.getBirthday() == null) {
-            throw new ValidationException("Неправильная дата рождения пользователя с id '" + user.getId() + "'");
-        }
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new ValidationException("Неверный адрес электронной почты пользователя с id '" + user.getId() + "'");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-            log.info("Имя пользователя с id '{}' было установлено как '{}'", user.getId(), user.getName());
-        }
-        if (user.getId() == 0 || user.getId() < 0) {
-            user.setId(id);
-            log.info("Неверный id пользователя был задан как '{}'", user.getId());
-        }
-        if (user.getLogin().isBlank() || user.getLogin().isEmpty()) {
-            throw new ValidationException("Неверный логин пользователя с id '" + user.getId() + "'");
-        }
+        List<User> mutualFriends1 = getFriendsByUserId(userId);
+        List<User> mutualFriends2 = getFriendsByUserId(friendId);
+        List<User> mutualFriendsId = mutualFriends1
+                .stream()
+                .filter(mutualFriends2::contains)
+                .collect(Collectors.toList());
+        return getUsers()
+                .stream()
+                .filter(mutualFriendsId::contains)
+                .collect(Collectors.toList());
     }
 }

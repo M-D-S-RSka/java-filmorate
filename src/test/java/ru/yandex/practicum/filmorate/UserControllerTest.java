@@ -33,7 +33,7 @@ public class UserControllerTest {
     protected void start() {
         userStorage = new InMemoryUserStorage();
         userService = new UserService(userStorage);
-        controller = new UserController(userStorage, userService);
+        controller = new UserController(userService);
     }
 
     @Test
