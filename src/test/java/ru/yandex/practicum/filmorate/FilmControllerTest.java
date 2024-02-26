@@ -1,39 +1,57 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @SpringBootTest
 public class FilmControllerTest {
-    private final FilmController controller = new FilmController();
-    private final Film film = Film.builder()
+
+    FilmController controller;
+    UserStorage userStorage;
+    FilmStorage filmStorage;
+    FilmService filmService;
+    Film film = Film.builder()
             .id(1)
             .name("Movie")
             .description("Самый потрясающий фильм, который я когда-либо видел")
             .releaseDate(LocalDate.of(2020, 2, 2))
             .duration(120)
+            .likesIds(Set.of(1L))
             .build();
+
+    @BeforeEach
+    protected void start() {
+        filmStorage = new InMemoryFilmStorage();
+        userStorage = new InMemoryUserStorage();
+        filmService = new FilmService(filmStorage, userStorage);
+        controller = new FilmController(filmService);
+    }
 
     @Test
     void create_shouldAddAMovie() {
-        Film thisFilm = new Film(1, "Movie", "Самый потрясающий фильм, который я когда-либо видел",
-                LocalDate.of(2020, 2, 2), 120);
-        controller.create(thisFilm);
+        controller.create(film);
 
-        Assertions.assertEquals(film, thisFilm);
+        Assertions.assertEquals(film, filmStorage.getFilmById(1L));
         Assertions.assertEquals(1, controller.getFilms().size());
     }
 
     @Test
     void update_shouldUpdateMovieData() {
         Film thisFilm = new Film(1, "Movie", "I cried at the end, it was very thoughtful",
-                LocalDate.of(2020, 2, 2), 120);
+                LocalDate.of(2020, 2, 2), 120, Set.of(1L));
         controller.create(film);
         controller.update(thisFilm);
 

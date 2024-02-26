@@ -7,40 +7,47 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @SpringBootTest
 public class UserControllerTest {
-    private UserController controller = new UserController();
 
-    @BeforeEach
-    public void beforeEach() {
-        controller = new UserController();
-    }
-
-    private final User user = User.builder()
+    UserController controller;
+    UserStorage userStorage;
+    UserService userService;
+    User user = User.builder()
             .id(1)
             .email("yandex@yandex.ru")
             .login("user")
             .name("User")
             .birthday(LocalDate.of(1990, 1, 1))
+            .friendsIds(Set.of(2L))
             .build();
+
+    @BeforeEach
+    protected void start() {
+        userStorage = new InMemoryUserStorage();
+        userService = new UserService(userStorage);
+        controller = new UserController(userService);
+    }
 
     @Test
     void create_shouldCreateAUser() {
-        User thisUser = new User(1, "yandex@yandex.ru", "user", "User",
-                LocalDate.of(1990, 1, 1));
-        controller.create(thisUser);
+        controller.create(user);
 
-        Assertions.assertEquals(user, thisUser);
+        Assertions.assertEquals(user, userStorage.getUserById(1L));
         Assertions.assertEquals(1, controller.getUsers().size());
     }
 
     @Test
     void update_shouldUpdateUserData() {
         User thisUser = new User(1, "mail@yandex.ru", "user", "User",
-                LocalDate.of(1976, 9, 20));
+                LocalDate.of(1976, 9, 20), Set.of(2L), Set.of(1L));
         controller.create(user);
         controller.update(thisUser);
 
@@ -52,7 +59,7 @@ public class UserControllerTest {
     @Test
     void create_shouldCreateAUserIfNameIsEmpty() {
         User thisUser = new User(1, "mail@yandex.ru", "user", null,
-                LocalDate.of(1990, 1, 1));
+                LocalDate.of(1990, 1, 1), Set.of(2L), Set.of(1L));
         controller.create(thisUser);
 
         Assertions.assertEquals(1, thisUser.getId());
@@ -90,5 +97,4 @@ public class UserControllerTest {
         Assertions.assertThrows(ValidationException.class, () -> controller.create(user));
         Assertions.assertEquals(0, controller.getUsers().size());
     }
-
 }
