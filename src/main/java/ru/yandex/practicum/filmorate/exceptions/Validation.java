@@ -1,13 +1,13 @@
 package ru.yandex.practicum.filmorate.exceptions;
 
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
+
 public class Validation {
     public void validationUser(User user) throws ValidationException {
-        if(user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
+        if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
             throw new ValidationException("email не может быть пустым и должен содержать символ @");
         } else if (user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
             throw new ValidationException("Login не может быть пустым или содержать пробелы");
@@ -15,6 +15,7 @@ public class Validation {
             throw new ValidationException("Birthday не может быть в будущем");
         }
     }
+
     public void validationFilm(Film film) throws ValidationException {
         if (film.getName().isEmpty()) {
             throw new ValidationException("В названии фильма ничего не указано");
