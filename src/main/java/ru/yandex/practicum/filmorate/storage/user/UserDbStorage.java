@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,7 +20,7 @@ public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public User addUser(@NotNull User user) {
+    public User addUser(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
@@ -50,7 +49,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User updateUser(@NotNull User user) {
+    public User updateUser(User user) {
         String sqlQuery = "UPDATE Users SET email = ?, login = ?, name = ?, birthday = ? " +
                 "WHERE user_id = ?";
         int updateResult = jdbcTemplate.update(sqlQuery,

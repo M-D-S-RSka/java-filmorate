@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,7 +22,7 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Film addFilm(@NotNull Film film) {
+    public Film addFilm(Film film) {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("Films")
                 .usingGeneratedKeyColumns("film_id");
@@ -54,7 +53,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film updateFilm(@NotNull Film film) {
+    public Film updateFilm(Film film) {
         String sqlQuery = "UPDATE Films SET name = ?, description = ?, release_date = ?, " +
                 "duration = ?, mpa_id = ?" +
                 "WHERE film_id = ?";
