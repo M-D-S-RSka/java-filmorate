@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -53,7 +52,7 @@ public class FilmService {
         return films;
     }
 
-    public Film updateFilm(@NotNull Film film) {
+    public Film updateFilm(Film film) {
         genreStorage.deleteFilmGenre(film.getId());
         genreStorage.addFilmGenre(film.getId(), film.getGenres());
         filmStorage.updateFilm(film);
