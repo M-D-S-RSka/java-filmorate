@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import ru.yandex.practicum.filmorate.annootation.ValidReleaseDate;
 import ru.yandex.practicum.filmorate.markers.Marker;
 
 import javax.validation.constraints.NotBlank;
@@ -12,7 +13,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -30,6 +33,7 @@ public class Film {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull
+    @ValidReleaseDate
     private LocalDate releaseDate;
 
     @PositiveOrZero
@@ -38,17 +42,17 @@ public class Film {
     @JsonIgnoreProperties({"likesIds"})
     private Set<Long> likesIds;
 
-    public void addLike(Long id) {
-        if (likesIds == null) {
-            likesIds = new HashSet<>();
-        }
-        likesIds.add(id);
-    }
+    private Mpa mpa;
 
-    public void deleteLike(Long id) {
-        if (likesIds == null) {
-            likesIds = new HashSet<>();
-        }
-        likesIds.remove(id);
+    private LinkedHashSet<Genre> genres;
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("name", name);
+        values.put("description", description);
+        values.put("release_date", releaseDate);
+        values.put("duration", duration);
+        values.put("mpa_id", mpa.getId());
+        return values;
     }
 }

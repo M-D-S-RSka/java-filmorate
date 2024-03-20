@@ -2,82 +2,83 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.like.LikeStorage;
 
-import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FilmService {
 
-    private static final LocalDate date = LocalDate.of(1895, 12, 28);
-    private static final int characterCount = 200;
-    private static long id = 1;
-
-    //    @Autowired
     private final FilmStorage filmStorage;
-    //    @Autowired
-    private final UserStorage userStorage;
+    private final GenreStorage genreStorage;
+    private final LikeStorage likeStorage;
 
-    public Film create(Film film) {
-        return filmStorage.addFilm(film);
+    public Film addFilm(Film film) {
+        Film simpleFilm = filmStorage.addFilm(film);
+        genreStorage.addFilmGenre(simpleFilm.getId(), film.getGenres());
+        simpleFilm.setGenres(film.getGenres());
+        log.info("Выполнено сохранение фильма {}", film);
+        return simpleFilm;
     }
 
     public Film getFilmById(Long id) {
-        return filmStorage.getFilmById(id);
+        Film film = filmStorage.getFilmById(id);
+        film.setGenres(new LinkedHashSet<Genre>(genreStorage.getFilmGenre(film.getId())));
+        log.info("Выполено возвращение фильма по id {}", id);
+        return film;
     }
 
     public List<Film> getFilms() {
-        return filmStorage.getFilms();
+        List<Film> films = filmStorage.getFilms();
+        Map<Long, LinkedHashSet<Genre>> allFilmsGenres = genreStorage.getAllFilmsGenres();
+        System.out.println(allFilmsGenres);
+        for (Film film : films) {
+            if (allFilmsGenres.containsKey(film.getId())) {
+                film.setGenres(allFilmsGenres.get(film.getId()));
+            } else {
+                film.setGenres(new LinkedHashSet<Genre>());
+            }
+        }
+        log.info("Список фильмов состоит из {} шт.", films.size());
+        return films;
     }
 
-    public Film updateFilm(Film film) {
-        return filmStorage.updateFilm(film);
+    public Film updateFilm(@NotNull Film film) {
+        genreStorage.deleteFilmGenre(film.getId());
+        genreStorage.addFilmGenre(film.getId(), film.getGenres());
+        filmStorage.updateFilm(film);
+        log.info("Выполено обновление фильма {}", film);
+        return film;
     }
 
-    public List<Film> getTopFilms(Long count) {
-        return filmStorage.getFilms()
-                .stream()
-                .sorted((film1, film2) -> film2.getLikesIds().size() - film1.getLikesIds().size())
-                .limit(count)
-                .collect(Collectors.toList());
+    public List<Film> getTopFilms(int count) {
+        List<Film> films = filmStorage.getTopFilms(count);
+        for (Film film : films) {
+            film.setGenres(new LinkedHashSet<Genre>(genreStorage.getFilmGenre(film.getId())));
+        }
+        log.info("Список топ фильмов состоит из {} шт.", films.size());
+        return films;
     }
 
     public void addLikeFilm(Long filmId, Long userId) {
-        filmStorage.getFilmById(filmId).addLike(userId);
-        userStorage.getUserById(userId).addLikedFilm(filmId);
+        likeStorage.addFilmLike(filmId, userId);
+        log.info("Пользователь с userId {} поставил лайк фильму с filmId {}", userId, filmId);
         filmStorage.getFilmById(filmId);
     }
 
-    public void deleteLikeFilm(Long filmId, Long userId) {
-        filmStorage.getFilmById(filmId).deleteLike(userId);
-        userStorage.getUserById(userId).deleteLikedFilm(filmId);
+    public void removeFilmLike(Long filmId, Long userId) {
+        likeStorage.removeFilmLike(filmId, userId);
+        log.info("Пользователь с userId {} удалил лайк у фильма с filmId {}", userId, filmId);
         filmStorage.getFilmById(filmId);
-    }
-
-    public static void filmValidation(Film film) {
-        if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(date)) {
-            throw new ValidationException("Неверная дата");
-        }
-        if (film.getName().isEmpty() || film.getName().isBlank()) {
-            throw new ValidationException("Попытка задать пустое имя фильму");
-        }
-        if (film.getDuration() <= 0) {
-            throw new ValidationException("Попытка установить продолжительность меньше нуля");
-        }
-        if (film.getDescription().length() > characterCount || film.getDescription().isEmpty()) {
-            throw new ValidationException("Описание бьльше 200 символов или пустое");
-        }
-        if (film.getId() <= 0) {
-            film.setId(id);
-            log.info("У фильма установлен неверный id '{}", film.getId());
-        }
     }
 }
