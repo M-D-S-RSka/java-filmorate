@@ -25,7 +25,7 @@ public class UserValidationTest {
     }
 
     @Test
-    public void ValidateEmptyEmailUser() {
+    public void validateEmptyEmailUser() {
         user.setEmail("");
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
@@ -38,7 +38,7 @@ public class UserValidationTest {
     }
 
     @Test
-    public void ValidateNonSymbolEmailUser() {
+    public void validateNonSymbolEmailUser() {
         user.setEmail("emailemail.email");
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
@@ -51,7 +51,7 @@ public class UserValidationTest {
     }
 
     @Test
-    public void ValidateEmptyLoginUser() {
+    public void validateEmptyLoginUser() {
         user.setLogin("");
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
@@ -64,7 +64,7 @@ public class UserValidationTest {
     }
 
     @Test
-    public void ValidateLoginWithBlankUser() {
+    public void validateLoginWithBlankUser() {
         user.setLogin("Log in");
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
@@ -77,7 +77,7 @@ public class UserValidationTest {
     }
 
     @Test
-    public void ValidateBirthdayInTheFutureUser() {
+    public void validateBirthdayInTheFutureUser() {
         user.setBirthday(LocalDate.of(2035, 3, 7));
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
