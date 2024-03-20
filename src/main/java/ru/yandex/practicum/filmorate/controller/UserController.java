@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.markers.Marker.Update;
@@ -21,7 +22,7 @@ public class UserController {
     private final UserStorage userStorage;
 
     @PostMapping
-    public User addUser(@Validated @RequestBody User user) {
+    public User addUser(@Validated @RequestBody @NotNull User user) {
         log.info("Пользователь '{}' сохранен с id '{}'", user.getEmail(), user.getId());
         return userStorage.addUser(user);
     }
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@Validated(Update.class) @RequestBody User user) {
+    public User update(@Validated(Update.class) @RequestBody @NotNull User user) {
         log.info("'{}' информация пользователя с id '{}' обновлена", user.getLogin(), user.getId());
         return userStorage.updateUser(user);
     }

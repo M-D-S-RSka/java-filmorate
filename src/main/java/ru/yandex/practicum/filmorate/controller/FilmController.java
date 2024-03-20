@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.markers.Marker.Update;
@@ -22,7 +23,7 @@ public class FilmController {
     private final FilmStorage filmStorage;
 
     @PostMapping
-    public Film addFilm(@Validated @RequestBody Film film) {
+    public Film addFilm(@Validated @RequestBody @NotNull Film film) {
         log.info("'{}' фильм добавлен в библиотеку с id '{}'", film.getName(), film.getId());
         return filmStorage.addFilm(film);
     }
@@ -40,7 +41,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film updateFilm(@Validated(Update.class) @RequestBody Film film) {
+    public Film updateFilm(@Validated(Update.class) @RequestBody @NotNull Film film) {
         log.info("'{}' фильм обновлен в библиотеке с id '{}'", film.getName(), film.getId());
         return filmStorage.updateFilm(film);
     }
