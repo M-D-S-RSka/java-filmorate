@@ -6,12 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.markers.Marker;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -20,13 +18,15 @@ import java.util.Set;
 public class User {
 
     @NotNull(groups = {Marker.Update.class})
-    private long id;
+    private Long id;
 
     @Email
     private String email;
 
     @NotBlank
     private String login;
+
+    @NotBlank
     private String name;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -34,34 +34,13 @@ public class User {
     private LocalDate birthday;
 
     private Set<Long> friendsIds;
-    private Set<Long> likedFilms;
 
-
-    public void addLikedFilm(Long filmId) {
-        if (likedFilms == null) {
-            likedFilms = new HashSet<>();
-        }
-        likedFilms.add(filmId);
-    }
-
-    public void deleteLikedFilm(Long filmId) {
-        if (likedFilms == null) {
-            likedFilms = new HashSet<>();
-        }
-        likedFilms.remove(filmId);
-    }
-
-    public void addFriends(Long friendId) {
-        if (friendsIds == null) {
-            friendsIds = new HashSet<>();
-        }
-        friendsIds.add(friendId);
-    }
-
-    public void deleteFriends(Long strangerId) {
-        if (friendsIds == null) {
-            friendsIds = new HashSet<>();
-        }
-        friendsIds.remove(strangerId);
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("email", email);
+        values.put("login", login);
+        values.put("name", name);
+        values.put("birthday", birthday);
+        return values;
     }
 }
