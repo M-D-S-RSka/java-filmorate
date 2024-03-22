@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.markers.Marker.Update;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
 
@@ -19,30 +18,29 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserStorage userStorage;
 
     @PostMapping
     public User addUser(@Validated @RequestBody @NotNull User user) {
         log.info("Пользователь '{}' сохранен с id '{}'", user.getEmail(), user.getId());
-        return userStorage.addUser(user);
+        return userService.addUser(user);
     }
 
     @GetMapping
     public List<User> getUsers() {
-        log.info("Количество пользователей '{}'", userStorage.getUsers().size());
-        return userStorage.getUsers();
+        log.info("Количество пользователей '{}'", userService.getUsers().size());
+        return userService.getUsers();
     }
 
     @PutMapping
     public User update(@Validated(Update.class) @RequestBody @NotNull User user) {
         log.info("'{}' информация пользователя с id '{}' обновлена", user.getLogin(), user.getId());
-        return userStorage.updateUser(user);
+        return userService.updateUser(user);
     }
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
-        log.info("Поступил запрос на получение пользователя по id '{}'", userStorage.getUserById(id));
-        return userStorage.getUserById(id);
+        log.info("Поступил запрос на получение пользователя по id '{}'", userService.getUserById(id));
+        return userService.getUserById(id);
     }
 
     @GetMapping("/{id}/friends")
@@ -74,6 +72,6 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUserById(@PathVariable Long id) {
         log.info("Поступил запрос на удаление  пользователя с id '{}'", id);
-        userStorage.deleteUserById(id);
+        userService.deleteUserById(id);
     }
 }

@@ -17,25 +17,43 @@ public class UserService {
     private final UserStorage userStorage;
     private final FriendshipStorage friendshipStorage;
 
-    public User addFriend(Long userId, Long friendId) {
+    public void addFriend(Long userId, Long friendId) {
         friendshipStorage.addFriend(userId, friendId);
-        log.info("Пользователь userId = {} добавил в друзья friendId = {}", userId, friendId);
-        return userStorage.getUserById(userId);
+        userStorage.getUserById(userId);
     }
 
     public List<User> getFriendsIds(Long userId) {
-        log.info("Список друзей пользователя userId {}", userId);
         return friendshipStorage.getFriendsIds(userId);
     }
 
-    public User deleteFriend(Long userId, Long friendId) {
+    public void deleteFriend(Long userId, Long friendId) {
         friendshipStorage.deleteFriend(userId, friendId);
-        log.info("Пользователи userId {} и friendId {} больше не друзья", userId, friendId);
-        return userStorage.getUserById(userId);
+        userStorage.getUserById(userId);
     }
 
     public List<User> getMutualFriends(Long userId, Long othersId) {
-        log.info("Список общих друзей пользователей userId {} и othersId {}", userId, othersId);
         return friendshipStorage.getFriendship(userId, othersId);
+    }
+
+    public User addUser(User user) {
+        userStorage.addUser(user);
+        return user;
+    }
+
+    public List<User> getUsers() {
+        return userStorage.getUsers();
+    }
+
+    public User updateUser(User user) {
+        userStorage.updateUser(user);
+        return user;
+    }
+
+    public User getUserById(Long id) {
+        return userStorage.getUserById(id);
+    }
+
+    public void deleteUserById(Long id) {
+        userStorage.deleteUserById(id);
     }
 }

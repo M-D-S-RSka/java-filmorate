@@ -24,17 +24,13 @@ public class FilmService {
     private final LikeStorage likeStorage;
 
     public Film addFilm(Film film) {
-        Film simpleFilm = filmStorage.addFilm(film);
-        genreStorage.addFilmGenre(simpleFilm.getId(), film.getGenres());
-        simpleFilm.setGenres(film.getGenres());
-        log.info("Выполнено сохранение фильма {}", film);
-        return simpleFilm;
+        filmStorage.addFilm(film);
+        return film;
     }
 
     public Film getFilmById(Long id) {
         Film film = filmStorage.getFilmById(id);
         film.setGenres(new LinkedHashSet<Genre>(genreStorage.getFilmGenre(film.getId())));
-        log.info("Выполено возвращение фильма по id {}", id);
         return film;
     }
 
@@ -49,7 +45,6 @@ public class FilmService {
                 film.setGenres(new LinkedHashSet<Genre>());
             }
         }
-        log.info("Список фильмов состоит из {} шт.", films.size());
         return films;
     }
 
@@ -57,7 +52,6 @@ public class FilmService {
         genreStorage.deleteFilmGenre(film.getId());
         genreStorage.addFilmGenre(film.getId(), film.getGenres());
         filmStorage.updateFilm(film);
-        log.info("Выполено обновление фильма {}", film);
         return film;
     }
 
@@ -66,19 +60,16 @@ public class FilmService {
         for (Film film : films) {
             film.setGenres(new LinkedHashSet<Genre>(genreStorage.getFilmGenre(film.getId())));
         }
-        log.info("Список топ фильмов состоит из {} шт.", films.size());
         return films;
     }
 
     public void addLikeFilm(Long filmId, Long userId) {
         likeStorage.addFilmLike(filmId, userId);
-        log.info("Пользователь с userId {} поставил лайк фильму с filmId {}", userId, filmId);
         filmStorage.getFilmById(filmId);
     }
 
     public void removeFilmLike(Long filmId, Long userId) {
         likeStorage.removeFilmLike(filmId, userId);
-        log.info("Пользователь с userId {} удалил лайк у фильма с filmId {}", userId, filmId);
         filmStorage.getFilmById(filmId);
     }
 }

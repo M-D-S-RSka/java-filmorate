@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import ru.yandex.practicum.filmorate.exceptions.Validation;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 
+import static ru.yandex.practicum.filmorate.exceptions.Validation.validationUser;
+
 public class UserValidationTest {
-    private final Validation validation = new Validation();
     User user;
 
     @BeforeEach
@@ -30,7 +30,7 @@ public class UserValidationTest {
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                validation.validationUser(user);
+                validationUser(user);
             }
         });
         Assertions.assertEquals("email не может быть пустым и должен содержать символ @",
@@ -43,7 +43,7 @@ public class UserValidationTest {
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                validation.validationUser(user);
+                validationUser(user);
             }
         });
         Assertions.assertEquals("email не может быть пустым и должен содержать символ @",
@@ -56,7 +56,7 @@ public class UserValidationTest {
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                validation.validationUser(user);
+                validationUser(user);
             }
         });
         Assertions.assertEquals("Login не может быть пустым или содержать пробелы",
@@ -69,7 +69,7 @@ public class UserValidationTest {
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                validation.validationUser(user);
+                validationUser(user);
             }
         });
         Assertions.assertEquals("Login не может быть пустым или содержать пробелы",
@@ -82,7 +82,7 @@ public class UserValidationTest {
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                validation.validationUser(user);
+                validationUser(user);
             }
         });
         Assertions.assertEquals("Birthday не может быть в будущем",

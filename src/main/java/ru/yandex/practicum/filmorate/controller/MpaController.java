@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
+import ru.yandex.practicum.filmorate.service.MpaService;
 
 import java.util.List;
 
@@ -17,17 +17,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MpaController {
 
-    private final MpaStorage mpaStorage;
+    private final MpaService mpaService;
 
     @GetMapping
     public List<Mpa> getAllMpa() {
         log.info("Получен запрос на получение списка MPA");
-        return mpaStorage.getAllMpa();
+        return mpaService.getAllMpa();
     }
 
     @GetMapping("/{id}")
     public Mpa getMpaRating(@PathVariable("id") int mpaId) {
         log.info("Получен запрос на получение MPA по id {}", mpaId);
-        return mpaStorage.getMpaById(mpaId);
+        return mpaService.getMpaById(mpaId);
     }
 }

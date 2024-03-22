@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.exceptions.Validation;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -14,9 +13,10 @@ import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static ru.yandex.practicum.filmorate.exceptions.Validation.validationFilm;
+
 @SpringBootTest
 public class FilmValidationTest {
-    private final Validation validation = new Validation();
     private Film film;
     Mpa mpa = new Mpa(1, "G");
     LinkedHashSet<Genre> genre = new LinkedHashSet<Genre>(1);
@@ -33,7 +33,7 @@ public class FilmValidationTest {
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                validation.validationFilm(film);
+                validationFilm(film);
             }
         });
         Assertions.assertEquals("В названии фильма ничего не указано",
@@ -46,7 +46,7 @@ public class FilmValidationTest {
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                validation.validationFilm(film);
+                validationFilm(film);
             }
         });
         Assertions.assertEquals("Дата выхода фильма не может быть раньше 28.12.1895г",
@@ -61,7 +61,7 @@ public class FilmValidationTest {
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                validation.validationFilm(film);
+                validationFilm(film);
             }
         });
         Assertions.assertEquals("В описании фильма больше 200 символов",
@@ -74,7 +74,7 @@ public class FilmValidationTest {
         final RuntimeException exception = Assertions.assertThrows(RuntimeException.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                validation.validationFilm(film);
+                validationFilm(film);
             }
         });
         Assertions.assertEquals("Продолжительность фильма не может быть отрицательной",
